@@ -18,7 +18,7 @@ def home(request):
     Eligendi iure dolorum, velit tenetur, debitis ullam labore non iste numquam quod molestiae assumenda aperiam mollitia quaerat quam ipsum doloremque atque dicta odio cupiditate. Aperiam hic iure nihil asperiores facilis."""
 
     print("Test 1 pass")
-    return render(request, 'index.html', context = {'peoples' : peoples, "text":text})
+    return render(request, 'home/index.html', context = {'peoples' : peoples, "text":text})
         
 
 def success(request):
@@ -26,9 +26,11 @@ def success(request):
     return HttpResponse("<h1> This page created by Manasi </h1>")
 
 def about(request):
+    context = {'page' : 'About'}
     print("Test 3 pass")
-    return render(request,'home/about.html')
+    return render(request,'home/about.html',context)
 
 def contact(request):
+    context = {'page':'Contact'}
     print("Test 4 pass")
-    return render(request,'home/contact.html')
+    return render(request,'home/contact.html',context)
