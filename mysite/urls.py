@@ -18,8 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from home.views import *
+from vege.views import *
 
 urlpatterns = [
+    path('', home , name = "home"),
+    path('receipe/' , receipe , name='receipe'),
     path('about/',about,name = "about"),
     path('contact/', contact,name = "contact"),
     path('',home, name = "home"),
