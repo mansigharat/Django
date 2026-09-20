@@ -18,9 +18,12 @@ def receipe(request):
         )
 
         return redirect('/receipe/')
-        # print(receipe_name)
-        # print(receipe_description)
-        # print(receipe_image)
-        # print("Test Pass ✅️")
 
-    return render(request, 'receipe.html')
+    queryset = Recipe.objects.all()
+    context = {'receipes' : queryset}
+    return render(request, 'receipe.html',context)
+
+def delete_receipe(request,id):
+    queryset = Recipe.objects.get(id = id)
+    queryset.delete()
+    return redirect('/receipe/')
