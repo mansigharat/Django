@@ -3,6 +3,7 @@ from .models import *
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate,login
 
 # Create your views here.
 def receipe(request):
@@ -58,6 +59,26 @@ def delete_receipe(request,id):
     return redirect('/receipe/')
 
 def login_page(request):
+    if request.method == "POST":
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        if User.objects.filter(username=username).exists():
+            messages.info(request, "Invalid Username")
+            return redirect('/login/')
+
+        user = authenticate(username=username , password=password)
+        if user is None:
+            messages.info(request, "Invalid Password")
+            return redirect('/login/')  
+
+        else:
+            login()   
+
+              
+
+
     return render(request,'login.html')
 
 def register_page(request):
