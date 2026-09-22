@@ -3,9 +3,10 @@ from .models import *
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+@login_required(login_url="/login/")
 def receipe(request):
     if request.method == "POST":
         data = request.POST
@@ -20,7 +21,7 @@ def receipe(request):
             receipe_description = receipe_description,
         )
 
-        return redirect('/receipes/')
+        return redirect('/receipe/')
 
     queryset = Recipe.objects.all()
 
@@ -48,10 +49,8 @@ def update_receipe(request,id):
         queryset.save()
         return redirect('/receipe/')
         
-
     context = {'receipes' : queryset}
     return render(request, 'update_receipe.html',context)
-
 
 def delete_receipe(request,id):
     queryset = Recipe.objects.get(id = id)
@@ -64,22 +63,22 @@ def login_page(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        if User.objects.filter(username=username).exists():
-            messages.info(request, "Invalid Username")
+        if not User.objects.filter(username=username).exists():
+            messages.error(request, "Invalid Username")
             return redirect('/login/')
 
         user = authenticate(username=username , password=password)
         if user is None:
-            messages.info(request, "Invalid Password")
+            messages.error(request, "Invalid Password")
             return redirect('/login/')  
-
         else:
-            login()   
-
-              
-
-
+            login(request,user)   
+            return redirect('/receipe/')
     return render(request,'login.html')
+
+def logout_page(request):
+    logout(request)
+    return redirect('/login/')
 
 def register_page(request):
     if request.method == "POST":
@@ -104,4 +103,3 @@ def register_page(request):
         messages.info(request, "Account Created Successfully")
         return redirect('/register/')
     return render(request,'register.html')
-
