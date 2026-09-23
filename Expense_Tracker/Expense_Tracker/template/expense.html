@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block start %}
+<div class="container mt-5">
+
+    <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype = "multipart/form-data">
+        {% csrf_token %}  
+        <h2>Add Expense</h2>
+        <hr>
+        <div class="mb-3">
+            <label for="Expense name" class="form-label">Expense Name</label>
+            <input name = "expense_name" required type="text" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="Expense amount"  class="form-label">Amount</label>
+            <input class="form-control" name="expense_amount" type="number" required></input>
+        </div>
+
+        <div class="mb-3">
+            <label for="Category" class="form-label">Category</label>
+            <input type="text" class="form-control" name= "expense_category"></input>
+        </div>
+
+        <div class="mb-3">
+            <label for="Category" class="form-label">Date</label>
+            <input type="date" class="form-control" name= "expense_date"></input>
+        </div>
+
+        <button type="submit" class="btn btn-success">Add Expense</button>
+    </form>
+<hr>
+    <div class="mt-5">
+      <div class="mx-auto col-6">
+        <form>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label mt-4">Search Expense Name</label>
+            <input name = "search" type="text" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div>
+    </div>
+<hr>
+    <table class="table mt-3">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Expense Name</th>
+      <th scope="col">Expense Amount</th>
+      <th scope="col">Expense Category</th>
+      <th scope="col">Expense date</th>
+    </tr>
+  </thead>
+
+  <tbody>
+     {% for expense in expenses %}
+    <tr>
+      <th scope="row">{{forloop.counter}}</th>
+      <td>{{expense.name}}</td>
+      <td>{{expense.amount}}</td>
+      <td>{{expense.category}}</td>
+      <td>{{expense.date}}</td>
+      <td><a href="/update_expense/{{ expense.id }}" class="btn btn-primary mt-2">Update</a></td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+
+</div>
+
+{% endblock %}

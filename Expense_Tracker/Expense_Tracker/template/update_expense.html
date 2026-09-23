@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block start %}
+
+<h1> Hello this is expense.html page </h1>
+
+<div class="container mt-5">
+
+    <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype = "multipart/form-data">
+        {% csrf_token %}  
+        <h2>Update Expense</h2>
+        <hr>
+        <div class="mb-3">
+            <label for="Expense name" class="form-label">Expense Name</label>
+            <input name = "expense_name" required type="text" class="form-control"  value="{{ expenses.name }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="Expense amount"  class="form-label">Amount</label>
+            <input class="form-control" name="expense_amount" type="number" required></input>
+        </div>
+
+        <div class="mb-3">
+            <label for="Category" class="form-label">Category</label>
+            <input type="text" class="form-control" name= "expense_category"></input>
+        </div>
+
+        <div class="mb-3">
+            <label for="Category" class="form-label">Date</label>
+            <input type="date" class="form-control" name= "expense_date"></input>
+        </div>
+
+        <button type="submit" class="btn btn-success">Update Expense</button>
+    </form>
+
+</div>
+
+{% endblock %}
