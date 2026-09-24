@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block start %}
+
+<style>
+    body {
+        background: #eef2ef;
+    }
+
+    .register-card {
+        border: 0;
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow: 0 16px 40px rgba(20, 48, 47, 0.15);
+    }
+
+    .register-card h2 {
+        font-weight: 700;
+        color: #14302f;
+        margin-bottom: 0;
+    }
+
+    .register-card hr {
+        margin: 1rem 0 1.5rem;
+        opacity: 0.15;
+    }
+
+    .register-card .form-label {
+        font-weight: 500;
+        color: #14302f;
+    }
+
+    .register-card .form-control {
+        padding: 0.65rem 0.9rem;
+        border: 1px solid #d5dfdb;
+        border-radius: 10px;
+    }
+
+    .register-card .form-control:focus {
+        border-color: #0f5257;
+        box-shadow: 0 0 0 0.2rem rgba(15, 82, 87, 0.2);
+    }
+
+    .register-card .btn-primary {
+        width: 100%;
+        padding: 0.7rem;
+        font-weight: 500;
+        background: #0f5257;
+        border-color: #0f5257;
+        border-radius: 10px;
+    }
+
+    .register-card .btn-primary:hover {
+        background: #0a3b3f;
+        border-color: #0a3b3f;
+    }
+
+    .register-card a {
+        color: #0f5257;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .register-card a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container mt-5">
+
+    <form class="col-12 col-md-8 col-lg-5 mx-auto card register-card p-4" method="post">
+        {% csrf_token %}
+        <h2>Registration</h2>
+        <hr>
+
+        {% if messages %}
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            <div>
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" autocomplete="username" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" autocomplete="new-password" required>
+        </div>
+
+        <p class="mt-2">
+            Already have an account?
+            <a href="/login/">Login</a>
+        </p>
+
+        <button type="submit" class="btn btn-primary">
+            Submit
+        </button>
+    </form>
+</div>
+{% endblock %}

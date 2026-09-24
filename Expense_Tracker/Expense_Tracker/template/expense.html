@@ -1,70 +1,250 @@
 {% extends "base.html" %}
 {% block start %}
-<div class="container mt-5">
 
-    <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype = "multipart/form-data">
-        {% csrf_token %}  
+<style>
+    body {
+        background: #eef2ef;
+    }
+
+    /* Navbar */
+    .app-navbar {
+        background: #0f5257;
+        padding: 0.9rem 1rem;
+        box-shadow: 0 6px 20px rgba(20, 48, 47, 0.2);
+    }
+
+    .app-navbar .navbar-brand {
+        color: #ffffff;
+        font-size: 1.3rem;
+        letter-spacing: 0.3px;
+    }
+
+    .app-navbar .btn-auth {
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 10px;
+        padding: 0.4rem 1.1rem;
+    }
+
+    .app-navbar .btn-auth:hover {
+        background: #ffffff;
+        color: #0f5257;
+    }
+
+    /* Form card */
+    .expense-card {
+        border: 0;
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow: 0 16px 40px rgba(20, 48, 47, 0.15);
+    }
+
+    .expense-card h2 {
+        font-weight: 700;
+        color: #14302f;
+        margin-bottom: 0;
+    }
+
+    .expense-card hr {
+        margin: 1rem 0 1.5rem;
+        opacity: 0.15;
+    }
+
+    .expense-card .form-label {
+        font-weight: 500;
+        color: #14302f;
+    }
+
+    .expense-card .form-control,
+    .expense-card .form-select {
+        padding: 0.65rem 0.9rem;
+        border: 1px solid #d5dfdb;
+        border-radius: 10px;
+    }
+
+    .expense-card .form-control:focus,
+    .expense-card .form-select:focus {
+        border-color: #0f5257;
+        box-shadow: 0 0 0 0.2rem rgba(15, 82, 87, 0.2);
+    }
+
+    .btn-brand {
+        width: 100%;
+        padding: 0.7rem;
+        font-weight: 500;
+        color: #ffffff;
+        background: #0f5257;
+        border-color: #0f5257;
+        border-radius: 10px;
+    }
+
+    .btn-brand:hover {
+        color: #ffffff;
+        background: #0a3b3f;
+        border-color: #0a3b3f;
+    }
+
+    /* Total */
+    .total-box {
+        background: #ffffff;
+        border-left: 6px solid #0f5257;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 6px 20px rgba(20, 48, 47, 0.1);
+    }
+
+    .total-box h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #14302f;
+    }
+
+    /* Table */
+    .table-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 0.5rem 1rem 1rem;
+        box-shadow: 0 6px 20px rgba(20, 48, 47, 0.1);
+    }
+
+    .table-card thead th {
+        color: #0f5257;
+        border-bottom: 2px solid #d5dfdb;
+        white-space: nowrap;
+    }
+
+    .table-card td,
+    .table-card th {
+        vertical-align: middle;
+    }
+
+    .btn-small {
+        border-radius: 8px;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-update {
+        color: #0f5257;
+        border: 1px solid #0f5257;
+    }
+
+    .btn-update:hover {
+        background: #0f5257;
+        color: #ffffff;
+    }
+
+    .btn-delete {
+        color: #b3261e;
+        border: 1px solid #b3261e;
+    }
+
+    .btn-delete:hover {
+        background: #b3261e;
+        color: #ffffff;
+    }
+</style>
+
+<nav class="navbar app-navbar">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="/">
+            <b>Expenses Tracker</b>
+        </a>
+
+        {% if request.user.is_authenticated %}
+            <a href="/logout/" class="btn btn-auth">Logout</a>
+        {% else %}
+            <a href="/login/" class="btn btn-auth">Login</a>
+        {% endif %}
+
+    </div>
+</nav>
+
+<div class="container mt-5 mb-5">
+
+    <form class="col-12 col-md-8 col-lg-5 mx-auto card expense-card p-4" method="post">
+        {% csrf_token %}
+
         <h2>Add Expense</h2>
         <hr>
+
         <div class="mb-3">
-            <label for="Expense name" class="form-label">Expense Name</label>
-            <input name = "expense_name" required type="text" class="form-control">
+            <label for="expense_name" class="form-label">Expense Name</label>
+            <input id="expense_name" name="expense_name" required type="text" class="form-control">
         </div>
 
         <div class="mb-3">
-            <label for="Expense amount"  class="form-label">Amount</label>
-            <input class="form-control" name="expense_amount" type="number" required></input>
+            <label for="expense_amount" class="form-label">Amount (₹)</label>
+            <input id="expense_amount" name="expense_amount" required type="number"
+                   min="0" step="0.01" class="form-control">
         </div>
 
         <div class="mb-3">
-            <label for="Category" class="form-label">Category</label>
-            <input type="text" class="form-control" name= "expense_category"></input>
+            <label for="expense_category" class="form-label">Category</label>
+            <select id="expense_category" class="form-select" name="expense_category" required>
+                <option value="">Select Category</option>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Education">Education</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+            </select>
         </div>
 
         <div class="mb-3">
-            <label for="Category" class="form-label">Date</label>
-            <input type="date" class="form-control" name= "expense_date"></input>
+            <label for="expense_date" class="form-label">Date</label>
+            <input id="expense_date" type="date" class="form-control" name="expense_date" required>
         </div>
 
-        <button type="submit" class="btn btn-success">Add Expense</button>
+        <button type="submit" class="btn btn-brand">Add Expense</button>
     </form>
-<hr>
-    <div class="mt-5">
-      <div class="mx-auto col-6">
-        <form>
-        <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label mt-4">Search Expense Name</label>
-            <input name = "search" type="text" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-      </div>
-    </div>
-<hr>
-    <table class="table mt-3">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Expense Name</th>
-      <th scope="col">Expense Amount</th>
-      <th scope="col">Expense Category</th>
-      <th scope="col">Expense date</th>
-    </tr>
-  </thead>
 
-  <tbody>
-     {% for expense in expenses %}
-    <tr>
-      <th scope="row">{{forloop.counter}}</th>
-      <td>{{expense.name}}</td>
-      <td>{{expense.amount}}</td>
-      <td>{{expense.category}}</td>
-      <td>{{expense.date}}</td>
-      <td><a href="/update_expense/{{ expense.id }}" class="btn btn-primary mt-2">Update</a></td>
-    </tr>
-   {% endfor %}
-  </tbody>
-</table>
+    <div class="total-box col-12 col-md-8 col-lg-5 mx-auto mt-4">
+        <h3>Total Expense: ₹{{ total_amount }}</h3>
+    </div>
+
+    <div class="table-card table-responsive mt-4">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">Sr No.</th>
+                    <th scope="col">Expense Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Update</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ expense.name }}</td>
+                    <td>₹{{ expense.amount }}</td>
+                    <td>{{ expense.category }}</td>
+                    <td>{{ expense.date }}</td>
+                    <td>
+                        <a href="/update_expense/{{ expense.id }}" class="btn btn-small btn-update">Update</a>
+                    </td>
+                    <td>
+                        <a href="/delete_expense/{{ expense.id }}" class="btn btn-small btn-delete"
+                           onclick="return confirm('Delete this expense?');">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No expenses yet. Add your first one above 😊
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 </div>
 
