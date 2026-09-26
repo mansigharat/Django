@@ -8,7 +8,7 @@ class Recipe(models.Model):
     receipe_image = models.ImageField(upload_to = "receipe/")
     receipe_view_count = models.IntegerField(default=1)
     
-class Department(models.Model):
+class Departments(models.Model):
     department = models.CharField(max_length = 100)
 
     def __str__(self) -> str:
@@ -25,8 +25,8 @@ class StudentID(models.Model):
         return self.student_id
 
 class Student(models.Model):
-    department = models.ForeginKey(Department, related_name = "depart", on_delete=models.CASCADE)
-    student_id = models.OnToOneField(StudentID, related_name = "studentid" , on_delete = models)
+    department = models.ForeignKey(Departments, related_name = "depart", on_delete=models.CASCADE)
+    student_id = models.OneToOneField(StudentID, related_name = "studentid" , on_delete = models.CASCADE)
     student_name = models.CharField(max_length=100)
     student_email = models.EmailField(unique = True)
     student_age = models.IntegerField(default=18)
