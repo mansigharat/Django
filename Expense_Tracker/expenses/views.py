@@ -95,7 +95,7 @@ def register_page(request):
         user = User.objects.filter(username=username)
         if user.exists():
             messages.info(request, "Username already exists")
-            return redirect('/register/')
+            return redirect('')
 
         user = User.objects.create(
             first_name =  first_name,
@@ -106,5 +106,5 @@ def register_page(request):
         user.set_password(password)
         user.save()
         messages.info(request, "Account Created Successfully")
-        return redirect('/register/')
+        return redirect('')
     return render(request,'register.html')
