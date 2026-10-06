@@ -49,3 +49,7 @@ class SubjectMarks(models.Model):
     class Meta:
       unique_together = ['student', 'subject']  
 
+    class SubjectGrademodels.Model):
+    student = models.ForeignKey(Student , related_name = "studentmarks", on_delete = models.CASCADE)
+    subject = models.ForeignKey(Subject , on_delete = models.CASCADE)
+    marks = models.IntegerField()
