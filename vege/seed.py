@@ -35,3 +35,7 @@ def seed_db(n=10) -> None:
 
     except Exception as e:
         print(e)
+
+
+# except Exception as e:
+#         print(e)
