@@ -1,14 +1,30 @@
 from django.shortcuts import render
 from report.models import Student
 from django.core.paginator import Paginator
-
-objects = ["john", "paul", "george", "ringo"]
-p = Paginator(objects, 2)  # 2 items per page
-page1 = p.page(1)
-page2 = p.page(2)
-print(page1.object_list)  # ['john', 'paul']
-print(page2.object_list)  # ['george', 'ringo']
+from django.db.models import Q
 
 def get_students(request):
     queryset = Student.objects.all()
-    return render(request, 'students.html', {'queryset': queryset})
+
+    paginator = Paginator(queryset, 10)
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'students.html', {'page_obj': page_obj})
+
+
+def get_students(request):
+    queryset = Student.objects.all()
+
+    if request.GET.get('search'):
+        search = request.GET.get('search')
+        queryset = queryset.filter(
+            Q(student_name__icontains = search) |
+            Q(department__department__icontains = search)
+        )
+
+    paginator = Paginator(queryset, 10)
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'students.html', {'page_obj': page_obj})

@@ -21,5 +21,5 @@ from report.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('students/', get_students , name ="students")
+    path('', get_students , name ="students")
 ]

@@ -1,49 +1,460 @@
 {% extends "base.html" %}
+
 {% block start %}
-<div class="container mt-5">
 
-    {% if messages %}
-        <div class="alert alert-danger d-flex align-items-center" role="alert">
-            <div>
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+    .sr {
+        --ink: #17203a;
+        --ink-soft: #2b3556;
+        --accent: #f5b83d;
+        --accent-deep: #d99a14;
+        --wash: #edf1f7;
+        --surface: #ffffff;
+        --muted: #66708a;
+        --line: #dde3ee;
+        --ok-bg: #e4f4ef;
+        --ok-ink: #0d6b58;
+
+        font-family: 'DM Sans', system-ui, sans-serif;
+        color: var(--ink);
+        padding: 2.5rem 0 4rem;
+    }
+
+    body { background: var(--wash); }
+
+    /* ---------- Header band ---------- */
+    .sr-hero {
+        background: var(--ink);
+        color: #fff;
+        border-radius: 20px 20px 0 0;
+        padding: 2rem 2rem 4.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sr-hero::after {
+        content: "";
+        position: absolute;
+        right: -60px;
+        top: -80px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: var(--accent);
+        opacity: .95;
+    }
+
+    .sr-hero::before {
+        content: "";
+        position: absolute;
+        right: 120px;
+        bottom: -70px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 18px solid var(--ink-soft);
+    }
+
+    .sr-hero h2 {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-weight: 800;
+        font-size: clamp(1.9rem, 4vw, 2.8rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .sr-hero p {
+        margin: .4rem 0 0;
+        color: #b9c1d9;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ---------- Panel that overlaps the header ---------- */
+    .sr-panel {
+        background: var(--surface);
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 24px 50px -24px rgba(23, 32, 58, .35);
+        padding: 0 2rem 2rem;
+    }
+
+    /* ---------- Search ---------- */
+    .sr-search {
+        display: flex;
+        gap: .75rem;
+        margin-top: -2rem;
+        position: relative;
+        z-index: 2;
+        background: var(--surface);
+        padding: .6rem;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        box-shadow: 0 12px 30px -16px rgba(23, 32, 58, .4);
+    }
+
+    .sr-search-field {
+        flex: 1;
+        position: relative;
+    }
+
+    .sr-search-field svg {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        color: var(--muted);
+        pointer-events: none;
+    }
+
+    .sr-search input {
+        width: 100%;
+        border: 0;
+        background: var(--wash);
+        border-radius: 11px;
+        padding: .8rem 1rem .8rem 2.7rem;
+        font-size: .98rem;
+        color: var(--ink);
+        outline: none;
+        transition: box-shadow .15s ease, background .15s ease;
+    }
+
+    .sr-search input::placeholder { color: var(--muted); }
+
+    .sr-search input:focus {
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(245, 184, 61, .55);
+    }
+
+    .sr-search button {
+        border: 0;
+        background: var(--accent);
+        color: var(--ink);
+        font-weight: 700;
+        padding: 0 1.8rem;
+        border-radius: 11px;
+        cursor: pointer;
+        transition: background .15s ease, transform .1s ease;
+    }
+
+    .sr-search button:hover { background: var(--accent-deep); }
+    .sr-search button:active { transform: scale(.97); }
+
+    .sr-search button:focus-visible {
+        outline: 3px solid var(--ink);
+        outline-offset: 2px;
+    }
+
+    /* ---------- Alerts ---------- */
+    .sr-alert {
+        margin-top: 1.25rem;
+        padding: .85rem 1.1rem;
+        border-radius: 12px;
+        background: #fdecea;
+        color: #8a2a21;
+        border-left: 5px solid #d9534f;
+        font-weight: 500;
+    }
+
+    /* ---------- Table ---------- */
+    .sr-table-wrap {
+        margin-top: 1.75rem;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow-x: auto;
+    }
+
+    .sr-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 860px;
+    }
+
+    .sr-table thead th {
+        background: var(--wash);
+        color: var(--muted);
+        font-size: .82rem;
+        font-weight: 600;
+        padding: .9rem 1rem;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+        text-align: left;
+    }
+
+    .sr-table tbody td {
+        padding: .95rem 1rem;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        font-size: .94rem;
+        background: var(--surface);
+        transition: background .15s ease;
+    }
+
+    .sr-table tbody tr:last-child td { border-bottom: 0; }
+
+    .sr-table tbody tr:hover td { background: #fffaf0; }
+
+    .sr-table tbody tr td:first-child {
+        box-shadow: inset 4px 0 0 transparent;
+        color: var(--muted);
+        font-weight: 500;
+    }
+
+    .sr-table tbody tr:hover td:first-child {
+        box-shadow: inset 4px 0 0 var(--accent);
+    }
+
+    .sr-id {
+        font-weight: 600;
+        color: var(--ink-soft);
+    }
+
+    /* ---------- Student cell with avatar ---------- */
+    .sr-person {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+    .sr-avatar {
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: var(--ink);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        text-transform: uppercase;
+    }
+
+    .sr-name {
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    /* ---------- Department pill ---------- */
+    .sr-dept {
+        display: inline-block;
+        background: var(--ok-bg);
+        color: var(--ok-ink);
+        padding: .25rem .7rem;
+        border-radius: 999px;
+        font-size: .82rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .sr-email {
+        color: var(--ink-soft);
+        text-decoration: none;
+        border-bottom: 1px dashed var(--line);
+    }
+
+    .sr-email:hover {
+        color: var(--ink);
+        border-bottom-color: var(--accent-deep);
+    }
+
+    .sr-address {
+        color: var(--muted);
+        max-width: 240px;
+    }
+
+    /* ---------- Empty state ---------- */
+    .sr-empty {
+        text-align: center;
+        padding: 3.5rem 1rem !important;
+        color: var(--muted);
+    }
+
+    .sr-empty strong {
+        display: block;
+        color: var(--ink);
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-size: 1.25rem;
+        margin-bottom: .25rem;
+    }
+
+    /* ---------- Pagination ---------- */
+    .sr-pager {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: .4rem;
+        list-style: none;
+        padding: 0;
+        margin: 1.75rem 0 0;
+    }
+
+    .sr-pager a,
+    .sr-pager span {
+        display: inline-block;
+        padding: .55rem 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        font-weight: 500;
+        font-size: .9rem;
+        text-decoration: none;
+        transition: background .15s ease, border-color .15s ease;
+    }
+
+    .sr-pager a:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+    }
+
+    .sr-pager a:focus-visible {
+        outline: 3px solid var(--ink);
+        outline-offset: 2px;
+    }
+
+    .sr-pager .is-current {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .sr-pager .is-disabled {
+        background: var(--wash);
+        color: #a4adc2;
+        cursor: not-allowed;
+    }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 576px) {
+        .sr-hero { padding: 1.5rem 1.25rem 4rem; border-radius: 16px 16px 0 0; }
+        .sr-panel { padding: 0 1rem 1.5rem; border-radius: 0 0 16px 16px; }
+        .sr-search { flex-direction: column; }
+        .sr-search button { padding: .8rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sr * { transition: none !important; }
+    }
+</style>
+
+<div class="container sr">
+
+    <header class="sr-hero">
+        <h2>Students</h2>
+        <p>{{ page_obj.paginator.count }} record{{ page_obj.paginator.count|pluralize }} on file</p>
+    </header>
+
+    <section class="sr-panel">
+
+        <form class="sr-search" method="get">
+            <div class="sr-search-field">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m20 20-3.5-3.5"></path>
+                </svg>
+                <input name="search"
+                       value="{{ request.GET.search }}"
+                       placeholder="Search by student name"
+                       aria-label="Search by student name">
             </div>
-        </div>
-    {% endif %}
+            <button type="submit">Search</button>
+        </form>
 
-    <h2 class="mb-4">Students</h2>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Sr No.</th>
-                <th>Student ID</th>
-                <th>Department</th>
-                <th>Student Name</th>
-                <th>Student Email</th>
-                <th>Student Age</th>
-                <th>Student Address</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in queryset %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ student.student_id }}</td>
-                    <td>{{ student.department }}</td>
-                    <td>{{ student.student_name }}</td>
-                    <td>{{ student.student_email }}</td>
-                    <td>{{ student.student_age }}</td>
-                    <td>{{ student.student_address }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="2" class="text-center">No students found.</td>
-                </tr>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="sr-alert" role="alert">{{ message }}</div>
             {% endfor %}
-        </tbody>
-    </table>
+        {% endif %}
 
+        <div class="sr-table-wrap">
+            <table class="sr-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Student ID</th>
+                        <th>Student</th>
+                        <th>Department</th>
+                        <th>Email</th>
+                        <th>Age</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for student in page_obj %}
+                        <tr>
+                            <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                            <td class="sr-id">{{ student.student_id }}</td>
+                            <td>
+                                <div class="sr-person">
+                                    <span class="sr-avatar">{{ student.student_name|first }}</span>
+                                    <span class="sr-name">{{ student.student_name }}</span>
+                                </div>
+                            </td>
+                            <td><span class="sr-dept">{{ student.department }}</span></td>
+                            <td>
+                                <a class="sr-email" href="mailto:{{ student.student_email }}">
+                                    {{ student.student_email }}
+                                </a>
+                            </td>
+                            <td>{{ student.student_age }}</td>
+                            <td class="sr-address">{{ student.student_address }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="sr-empty">
+                                <strong>No students found</strong>
+                                Try a different name or clear the search box.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if page_obj.has_other_pages %}
+            {% with qs=request.GET.search|urlencode %}
+            <nav aria-label="Student pagination">
+                <ul class="sr-pager">
+
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page=1{% if qs %}&search={{ qs }}{% endif %}">First</a></li>
+                        <li><a href="?page={{ page_obj.previous_page_number }}{% if qs %}&search={{ qs }}{% endif %}">Previous</a></li>
+                    {% else %}
+                        <li><span class="is-disabled">First</span></li>
+                        <li><span class="is-disabled">Previous</span></li>
+                    {% endif %}
+
+                    <li>
+                        <span class="is-current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}{% if qs %}&search={{ qs }}{% endif %}">Next</a></li>
+                        <li><a href="?page={{ page_obj.paginator.num_pages }}{% if qs %}&search={{ qs }}{% endif %}">Last</a></li>
+                    {% else %}
+                        <li><span class="is-disabled">Next</span></li>
+                        <li><span class="is-disabled">Last</span></li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+            {% endwith %}
+        {% endif %}
+
+    </section>
 </div>
 {% endblock %}
