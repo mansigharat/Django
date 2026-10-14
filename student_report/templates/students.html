@@ -395,7 +395,9 @@
                     {% for student in page_obj %}
                         <tr>
                             <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
-                            <td class="sr-id">{{ student.student_id }}</td>
+                            <td>
+                                <a href="{% url 'see_marks' student.student_id %}">{{ student.student_id }}</a>
+                            </td>
                             <td>
                                 <div class="sr-person">
                                     <span class="sr-avatar">{{ student.student_name|first }}</span>

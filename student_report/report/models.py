@@ -47,7 +47,6 @@ class SubjectMarks(models.Model):
     def __str__(self) -> str:
         return f"{self.student.student_name} {self.subject.subject_name}"
 
-
     class Meta:
       unique_together = ['student', 'subject']  
 
