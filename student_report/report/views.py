@@ -34,4 +34,3 @@ def get_students(request):
 def see_marks(request, student_id):
     queryset = SubjectMarks.objects.all(student__student_id__student_id = student_id)
     return render(request, 'see_marks.html', {'queryset':queryset})
-
