@@ -27,8 +27,6 @@ def get_students(request):
     paginator = Paginator(queryset, 10)
     page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
-
-
     return render(request, 'students.html', {'page_obj': page_obj})
 
 def see_marks(request, student_id):
